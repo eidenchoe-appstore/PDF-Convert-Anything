@@ -1,38 +1,77 @@
 # PDF Convert Anything
 
-작은 macOS 앱으로 PDF 파일을 PNG 슬라이드 이미지로 변환합니다.
+PDF Convert Anything is a small macOS utility that turns each page of a PDF into a PNG image.
+
+복잡한 설정 없이 PDF를 드래그하면 각 페이지가 원본 PDF와 같은 폴더에 PNG 파일로 저장됩니다.
+
+[Download v1.0.0](https://github.com/eidenchoe-appstore/PDF-Convert-Anything/releases/download/v1.0.0/PDF-Convert-Anything-v1.0.0.dmg)
+
+## Preview
+
+![PDF Convert Anything app icon](icon.icon/Assets/SCR-20260609-ecnb.jpeg)
 
 ## 기능
 
-- PDF 파일 드래그 앤 드롭 변환
-- Finder 파일 선택으로 여러 PDF 변환
-- 원본 PDF와 같은 폴더에 PNG 저장
-- 저장 파일명: `{PDF파일명}_slide_{페이지번호}pages.png`
-- 예시: `lecture.pdf` 3페이지 PDF -> `lecture_slide_1pages.png`, `lecture_slide_2pages.png`, `lecture_slide_3pages.png`
+- Drag and drop PDF files into a compact macOS window
+- Select one or more PDF files from Finder
+- Convert every PDF page to PNG
+- Save output images next to the original PDF
+- Use deterministic slide-style output names
+- Build a local `.app` bundle and installer DMG from scripts
 
-## 설치
+## Output Naming
 
-1. GitHub Releases에서 `PDF-Convert-Anything-v1.0.0.dmg`를 내려받습니다.
-2. DMG를 열고 `PDF Convert Anything.app`을 `Applications`로 드래그합니다.
-3. 앱을 실행한 뒤 PDF를 드래그하거나 `PDF 선택` 버튼을 누릅니다.
+Output files use this pattern:
 
-> 현재 빌드는 ad-hoc 서명된 로컬 배포용 앱입니다. Gatekeeper 경고가 나오면 Finder에서 앱을 우클릭한 뒤 `열기`를 선택하세요.
+```text
+{PDF file name}_slide_{page index}pages.png
+```
 
-## 사용 방법
+Example:
 
-1. 앱을 실행합니다.
-2. PDF 파일을 창 가운데 드롭하거나 `PDF 선택` 버튼으로 선택합니다.
-3. 변환이 끝나면 `출력 폴더` 버튼으로 저장 위치를 엽니다.
+```text
+lecture.pdf
+lecture_slide_1pages.png
+lecture_slide_2pages.png
+lecture_slide_3pages.png
+```
 
-## 로컬 개발
+## Requirements
+
+- macOS 14 or later
+- Apple Silicon Mac for the provided build
+
+## Install
+
+1. Download `PDF-Convert-Anything-v1.0.0.dmg` from [Releases](https://github.com/eidenchoe-appstore/PDF-Convert-Anything/releases/tag/v1.0.0).
+2. Open the DMG.
+3. Drag `PDF Convert Anything.app` into `Applications`.
+4. Launch the app and drop a PDF file into the window.
+
+The current public build is ad-hoc signed for direct distribution. If macOS shows a Gatekeeper warning, right-click the app in Finder and choose `Open`.
+
+## Usage
+
+1. Open `PDF Convert Anything`.
+2. Drop one or more PDF files into the window, or click `PDF 선택`.
+3. Wait for the progress bar to finish.
+4. Click `출력 폴더` to open the folder containing the generated PNG files.
+
+## Development
 
 ```bash
 ./script/build_and_run.sh
 ```
 
-Codex 앱에서는 Run 버튼이 `./script/build_and_run.sh`에 연결되어 있습니다.
+The Codex Run button is wired to the same script through `.codex/environments/environment.toml`.
 
-## DMG 빌드
+Run tests:
+
+```bash
+swift test
+```
+
+## Build A DMG
 
 ```bash
 ./script/package_dmg.sh 1.0.0
@@ -45,10 +84,35 @@ dist/PDF Convert Anything.app
 dist/PDF-Convert-Anything-v1.0.0.dmg
 ```
 
-## 기술 구성
+## Project Structure
+
+```text
+Sources/PDFConvertAnything/          SwiftUI app and UI state
+Sources/PDFConvertAnythingCore/      PDF rendering and PNG export logic
+Tests/PDFConvertAnythingCoreTests/   Conversion tests
+Resources/AppIcon.icns               Compiled app icon
+icon.icon/                           Icon Composer source document
+script/                              Build, run, icon, and DMG scripts
+```
+
+## App Icon
+
+The app icon source is `icon.icon`, an Apple Icon Composer document. The build script renders it with Icon Composer's `ictool`, then packages the generated iconset as `Resources/AppIcon.icns`.
+
+## Tech Stack
 
 - Swift 5.10
 - SwiftUI
 - CoreGraphics PDF 렌더링
 - Swift Package Manager
 - macOS 14 이상
+
+## Release
+
+Current release: [v1.0.0](https://github.com/eidenchoe-appstore/PDF-Convert-Anything/releases/tag/v1.0.0)
+
+Release artifact:
+
+```text
+PDF-Convert-Anything-v1.0.0.dmg
+```
